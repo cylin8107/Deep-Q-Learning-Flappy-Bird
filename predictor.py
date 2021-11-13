@@ -57,23 +57,25 @@ class Predictor():
         self.memory_counter += 1
 
 
+
     @tf.function
     def train_step(self, b_state, b_action, b_reward, b_next_state):
 
         with tf.GradientTape() as tape:
             # training=True is only needed if there are layers with different
             # behavior during training versus inference (e.g. Dropout).
-            q_eval = tf.gather(self.eval_net(b_state), b_action, axis=1) # 重新計算這些 experience 當下 eval net 所得出的 Q value
+            q_eval = tf.gather(self.eval_net(b_state), b_action, batch_dims=1) # 重新計算這些 experience 當下 eval net 所得出的 Q value
             q_next = tf.stop_gradient(self.target_net(b_next_state)) # detach 才不會訓練到 target net
-            q_target = b_reward + self.gamma * tf.math.reduce_max(q_next,1) # 計算這些 experience 當下 target net 所得出的 Q value
-
+            q_target = b_reward + self.gamma * tf.reshape(tf.math.reduce_max(q_next,1), [self.batch_size,1]) # 計算這些 experience 當下 target net 所得出的 Q value
             loss = self.loss_object(q_eval, q_target)
         gradients = tape.gradient(loss, self.eval_net.trainable_variables)
         self.optimizer.apply_gradients(zip(gradients, self.eval_net.trainable_variables))
 
         self.train_loss(loss)
         self.train_accuracy(q_eval, q_target)
-        print('gggggggggggggggggg')
+        print(q_eval, q_target)
+        print(self.train_loss.result(), self.train_accuracy.result())
+
         # 每隔一段時間 (target_replace_iter), 更新 target net，即複製 eval net 到 target net
         self.learn_step_counter += 1
         checkpoint = tf.train.Checkpoint(self.eval_net)
@@ -100,6 +102,7 @@ class Predictor():
         self.train_accuracy.reset_states()
 
         self.train_step(b_state, b_action, b_reward, b_next_state)
+
         '''
         print(
             f'Loss: {self.train_loss.result()}, '
@@ -135,4 +138,3 @@ class Predictor():
         ''' save prediction to path
         '''
         pass
-

@@ -22,7 +22,7 @@ LR = 0.01
 EPSILON = 0.1
 GAMMA = 0.9 # decay rate of past observations
 TARGET_REPLACE_ITER = 100 # target network 更新間隔
-MEMORY_CAPACITY = 200 # number of previous transitions to remember
+MEMORY_CAPACITY = 100 # number of previous transitions to remember
 EPOCH = 4000
 
 FPS = 30
