@@ -1,0 +1,3 @@
+# ignore all pyc files.
+agent.py
+__pycache__/*
