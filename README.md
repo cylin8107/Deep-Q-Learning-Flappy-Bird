@@ -14,7 +14,7 @@ This project follows the description of the Deep Q Learning algorithm and shows 
 
 ## How to Run?
 ```
-git clone https://github.com/cylin8107/Deep-Q-Learning-Flappy-Bird-.git
-cd Deep-Q-Learning-Flappy-Bird-
+git clone https://github.com/cylin8107/Deep-Q-Learning-Flappy-Bird.git
+cd Deep-Q-Learning-Flappy-Bird
 python play_game.py
 ```
